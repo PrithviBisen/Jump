@@ -1,7 +1,8 @@
 import arcade
 import os
 
-SPRITE_SCALING = 0.15
+SPRITE_SCALING = 0.2
+CRATE_SCALING = 0.25
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -75,8 +76,15 @@ class MyGame(arcade.Window):
         global SCREEN_HEIGHT
         global SCREEN_WIDTH
         self.player_list = arcade.SpriteList()
+        self.wall_list = arcade.SpriteList()
 
         self.player_sprite = Player()
+
+        wall = arcade.Sprite('/home/robuntu/Bisen/Crate.jpeg', CRATE_SCALING)
+
+        wall.center_x = 200
+        wall.center_y = 150
+        self.wall_list.append(wall)
         self.player_sprite.center_x = 50
         self.player_sprite.center_y = 100
         self.player_list.append(self.player_sprite)
@@ -89,8 +97,10 @@ class MyGame(arcade.Window):
         arcade.draw_rectangle_filled(SCREEN_WIDTH/2,55,SCREEN_WIDTH,110,arcade.color.DARK_GREEN)
 
         self.player_list.draw()
+        self.wall_list.draw()
 
     def update(self, delta_time):
+        global MOVEMENT_SPEED
 
         if keys_pressed[arcade.key.RIGHT]:
             player_loc[0] += MOVEMENT_SPEED
@@ -106,6 +116,12 @@ class MyGame(arcade.Window):
                             SCREEN_HEIGHT/2 + 300)
 
         self.player_list.update()
+        self.wall_list.update()
+        wall_hit_list = arcade.check_for_collision_with_list(self.player_sprite,self.wall_list)
+
+        for wall in wall_hit_list:
+            self.player_sprite.change_x = 0
+            self.player_sprite.change_y = 0
 
     def on_key_press(self, key, modifiers):
 
